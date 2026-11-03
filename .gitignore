@@ -1,0 +1,68 @@
+# Patterns starting with "/" only match at the repo root.
+# That matters here: "data/" alone would also ignore src/data/.
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Environment / secrets ---
+.env
+.env.*
+
+# --- Datasets (live on Google Drive, never in Git) ---
+/data/*
+!/data/.gitkeep
+
+# --- Model checkpoints (downloaded from Drive into models/) ---
+/models/*
+!/models/.gitkeep
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.safetensors
+*.h5
+
+# --- Results: track small metric/history JSONs only ---
+/results/*
+!/results/.gitkeep
+!/results/*.json
+
+# --- Generated figures and predictions ---
+/outputs/**
+!/outputs/**/
+!/outputs/**/.gitkeep
+
+# --- Training logs ---
+/runs/
+lightning_logs/
+wandb/
+
+# --- Archives and raw imagery (must never be committed by accident) ---
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.tif
+*.tiff
+*.npy
+*.npz
+
+# --- Frontend ---
+node_modules/
+/frontend/dist/
+
+# --- OS / editor ---
+Thumbs.db
+Desktop.ini
+.DS_Store

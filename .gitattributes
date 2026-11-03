@@ -1,0 +1,27 @@
+# Store text with LF line endings so Windows (local) and Linux (Colab) diffs match.
+* text=auto eol=lf
+
+# Windows scripts need CRLF to run correctly.
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files: never touch line endings, never diff as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.tif binary
+*.tiff binary
+*.pt binary
+*.pth binary
+*.ckpt binary
+*.onnx binary
+*.npy binary
+*.npz binary
+*.zip binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
