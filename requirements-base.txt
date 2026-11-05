@@ -1,0 +1,17 @@
+# Shared by local and Colab.
+# Lower bounds + major-version caps (not exact pins): the versions Colab
+# preinstalls already satisfy them, so pip leaves Colab's stack alone.
+#
+# PyTorch / torchvision are NOT listed here: local uses the CPU build and
+# Colab its preinstalled CUDA build. See docs/environment_setup.md.
+numpy>=1.26,<3
+pandas>=2.0,<4
+matplotlib>=3.8,<4
+seaborn>=0.13,<1
+scikit-learn>=1.4,<2
+pillow>=10.0,<14
+# Headless build: no GUI windows needed, and it is what Colab ships.
+# Installing opencv-python next to it gives two conflicting cv2 packages.
+opencv-python-headless>=4.9,<6
+tqdm>=4.66,<5
+pyyaml>=6.0,<7

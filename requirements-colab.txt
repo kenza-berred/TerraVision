@@ -1,0 +1,4 @@
+# Google Colab: shared dependencies only.
+# Do NOT add torch, torchvision, jupyter or ipykernel: Colab provides them,
+# and reinstalling them can replace the CUDA build or break the kernel.
+-r requirements-base.txt

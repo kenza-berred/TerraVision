@@ -143,7 +143,11 @@ TerraVision/
 │   ├── 02_classification_training.ipynb
 │   ├── 03_segmentation_training.ipynb
 │   └── 04_model_evaluation.ipynb
-├── src/
+├── pyproject.toml           # makes src/terravision installable (pip install -e .)
+├── requirements-*.txt       # base (shared) / local / colab; torch installed separately
+├── src/terravision/         # importable package: `import terravision`
+│   ├── config.py            # paths from env vars (same code locally and on Colab)
+│   ├── utils.py             # seeds, device, environment info
 │   ├── data/                # datasets, preprocessing, transforms
 │   ├── classification/      # model.py, train.py, predict.py
 │   ├── segmentation/        # unet.py, train.py, predict.py

@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "terravision"
+version = "0.1.0"
+description = "Satellite image classification (CNN, EuroSAT) and semantic segmentation (U-Net, LandCover.ai)."
+readme = "README.md"
+requires-python = ">=3.10"
+# Dependencies are managed in requirements-*.txt, not here, so that
+# `pip install -e .` never touches Colab's preinstalled packages (torch, numpy...).
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

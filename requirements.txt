@@ -1,0 +1,7 @@
+# TerraVision dependencies are split by environment:
+#   requirements-base.txt   shared (local + Colab)
+#   requirements-local.txt  local Windows dev: base + notebooks, backend, tests
+#   requirements-colab.txt  Colab: base only
+# PyTorch is installed separately (CPU locally, preinstalled CUDA on Colab).
+# See docs/environment_setup.md. Default: local setup.
+-r requirements-local.txt
