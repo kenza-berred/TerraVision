@@ -101,9 +101,26 @@ Validation, test and inference use only tensor conversion + normalisation.
 
 ---
 
-## 2. LandCover.ai — segmentation [pending]
+## 2. LandCover.ai — segmentation
 
-To be verified from the official source and the downloaded files: version, format, class IDs, mask encoding, tiling, official splits, license.
+### 2.1 Source and license [source, checked 2026-11-05]
+
+| | |
+|---|---|
+| Official site | https://landcover.ai.linuxpolska.com/ |
+| Version used | **v1** (adds the road class and refines annotations; v0 is described as not peer reviewed) |
+| File | `landcover.ai.v1.zip`, 1,538,212,277 bytes (server Content-Length) |
+| Checksum | No official checksum published. We verify SHA-256 `dd448287…149a4b`, the value TorchGeo (`microsoft/torchgeo`) pins for the same URL. |
+| License | **CC BY-NC-SA 4.0** (non-commercial, share-alike). Fine for this academic project; the app and report must credit the dataset, and it may not be used commercially. |
+| Imagery (documented) | Aerial orthophotos of Poland, RGB GeoTIFF, EPSG:2180. 33 at 25 cm/px (~9000×9500 px) and 8 at 50 cm/px (~4200×4700 px); 216.27 km² total. |
+| Masks (documented) | Single-channel GeoTIFF. v1 values: building = 1, woodland = 2, water = 3, road = 4. TorchGeo uses 0 = background. |
+| Splits (documented) | Official `train.txt` / `val.txt` / `test.txt` listing 512×512 tiles produced by the included `split.py`. |
+
+Citation (from the official site): Boguszewski, A., Batorski, D., Ziemba-Jankowska, N., Dziedzic, T., Zambrzycka, A. *LandCover.ai: Dataset for Automatic Mapping of Buildings, Woodlands, Water and Roads from Aerial Imagery.* CVPR Workshops 2021, pp. 1102–1110. (Exact BibTeX to be copied from the site into the report.)
+
+### 2.2 Measured properties [pending]
+
+Measured by `inspect_landcoverai()` (`src/terravision/data/landcoverai.py`): archive layout, image vs. mask rasters (by band count), pairing, sizes, dtypes, and the actual values present in the masks. `split.py` is read as text and reviewed, not executed. Tiling and the segmentation Dataset are written only after this inspection.
 
 ---
 

@@ -18,8 +18,6 @@ from __future__ import annotations
 import hashlib
 import json
 import shutil
-import urllib.request
-import zipfile
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
@@ -29,6 +27,8 @@ import pandas as pd
 from PIL import Image
 from sklearn.model_selection import train_test_split
 from tqdm.auto import tqdm
+
+from terravision.data.download import download_verified, extract_archive, extract_once, file_hash  # noqa: F401 (extract_archive re-exported)
 
 # --- Official source -------------------------------------------------------
 EUROSAT_URL = "https://zenodo.org/records/7711810/files/EuroSAT_RGB.zip?download=1"
@@ -50,62 +50,13 @@ SPLIT_FRACTIONS = (0.70, 0.15, 0.15)
 
 
 # --- Download and extraction ----------------------------------------------
-def file_md5(path: Path, chunk_size: int = 1 << 20) -> str:
-    digest = hashlib.md5()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(chunk_size), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+def file_md5(path: Path) -> str:
+    return file_hash(path, "md5")
 
 
 def download_eurosat(raw_dir: Path, url: str = EUROSAT_URL) -> Path:
-    """Download the archive into ``raw_dir`` unless a verified copy exists.
-
-    The file is written to a ``.part`` name first and only renamed once its MD5
-    matches, so an interrupted download never looks complete.
-    """
-    raw_dir = Path(raw_dir)
-    raw_dir.mkdir(parents=True, exist_ok=True)
-    archive = raw_dir / EUROSAT_ARCHIVE
-
-    if archive.exists():
-        if file_md5(archive) == EUROSAT_MD5:
-            print(f"Archive already present and verified: {archive}")
-            return archive
-        raise ValueError(
-            f"{archive} exists but its MD5 does not match the published one. "
-            "Delete it manually and re-run to download a fresh copy."
-        )
-
-    partial = archive.with_suffix(".zip.part")
-    print(f"Downloading {url}")
-    with urllib.request.urlopen(url) as response, open(partial, "wb") as out:
-        total = int(response.headers.get("Content-Length", 0)) or None
-        with tqdm(total=total, unit="B", unit_scale=True) as bar:
-            for chunk in iter(lambda: response.read(1 << 20), b""):
-                out.write(chunk)
-                bar.update(len(chunk))
-
-    md5 = file_md5(partial)
-    if md5 != EUROSAT_MD5:
-        partial.unlink()
-        raise ValueError(f"MD5 mismatch: got {md5}, expected {EUROSAT_MD5}. Download discarded.")
-    partial.rename(archive)
-    print(f"Downloaded and verified: {archive}")
-    return archive
-
-
-def extract_archive(archive: Path, out_dir: Path) -> Path:
-    """Unzip ``archive`` into ``out_dir``, refusing entries that escape it."""
-    out_dir = Path(out_dir).resolve()
-    out_dir.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(archive) as zf:
-        for member in zf.namelist():
-            target = (out_dir / member).resolve()
-            if out_dir not in target.parents and target != out_dir:
-                raise ValueError(f"Unsafe path in archive: {member}")
-        zf.extractall(out_dir)
-    return out_dir
+    """Download the archive into ``raw_dir`` unless a verified copy exists."""
+    return download_verified(url, Path(raw_dir) / EUROSAT_ARCHIVE, EUROSAT_MD5, "md5")
 
 
 def find_class_root(base: Path) -> Path:
@@ -232,15 +183,7 @@ def prepare_eurosat(raw_dir: Path, data_dir: Path, processed_dir: Path,
     """
     archive = download_eurosat(raw_dir)
 
-    extract_dir = Path(data_dir) / "eurosat"
-    if not extract_dir.exists():
-        # Extract to a temporary name, then rename: an interrupted extraction
-        # leaves only the .tmp folder, which is cleared on the next run.
-        tmp_dir = extract_dir.with_name("eurosat.tmp")
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-        print(f"Extracting to {extract_dir}")
-        extract_archive(archive, tmp_dir)
-        tmp_dir.rename(extract_dir)
+    extract_dir = extract_once(archive, Path(data_dir) / "eurosat")
     class_root = find_class_root(extract_dir)
 
     scan = scan_dataset(class_root)
