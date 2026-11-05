@@ -43,9 +43,37 @@ Every fact below is labelled with where it comes from:
 
 A preprint also exists: arXiv:1709.00029 (2017).
 
-### 1.3 Measured properties [pending]
+### 1.3 Measured properties [measured, Colab run 2026-11-05]
 
-Filled from `eurosat_report.json` after the Colab run: archive layout, class names, images per class, image size and colour mode, corrupt files, duplicates.
+From `eurosat_report.json` (archive MD5 verified):
+
+| Property | Value |
+|---|---|
+| Archive layout | `EuroSAT_RGB/<ClassName>/*.jpg` |
+| Images | 27,000 scanned, 27,000 readable, **0 corrupt**, **0 byte-identical duplicates** |
+| Size / mode | All **64×64**, all **RGB** |
+| Classes | 10, names identical to the paper |
+
+| Class | Images | | Class | Images |
+|---|---:|---|---|---:|
+| AnnualCrop | 3,000 | | Pasture | **2,000** |
+| Forest | 3,000 | | PermanentCrop | 2,500 |
+| HerbaceousVegetation | 3,000 | | Residential | 3,000 |
+| Highway | 2,500 | | River | 2,500 |
+| Industrial | 2,500 | | SeaLake | 3,000 |
+
+**Class balance:** mild imbalance, largest/smallest = 3,000 / 2,000 = 1.5. Accuracy alone would hide weaker small classes, so evaluation reports macro-averaged and per-class precision/recall/F1. Class-weighted loss is not planned for the baseline; it would only be added if per-class validation results justify it.
+
+**Split (seed 42):** train 18,899 / val 4,051 / test 4,050 (total 27,000; 69.99% / 15.00% / 15.00%). Stratified, so each split keeps the class proportions above.
+
+**Normalisation (train split only, pixels in [0, 1]):**
+
+| | R | G | B |
+|---|---|---|---|
+| mean | 0.344829 | 0.380553 | 0.408277 |
+| std | 0.203084 | 0.137132 | 0.115618 |
+
+These values are stored with every classification checkpoint so inference uses exactly the same preprocessing.
 
 ### 1.4 Preparation pipeline
 
